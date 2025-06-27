@@ -30,3 +30,29 @@ TELEGRAM_TOKEN=your_token_here
 - `Procfile`: required for Render
 - `.env.example`: token placeholder
 
+## Decentralized Storage Options
+
+### QuickNode
+
+You can pin wallet data to IPFS using the QuickNode Storage add-on.
+
+1. Create a QuickNode account and enable the **Storage** add-on.
+2. Generate a storage token from your QuickNode dashboard.
+3. Add `QUICKNODE_STORAGE_TOKEN=<your_token>` to your `.env` file.
+4. The bot's helper function will send JSON data to QuickNode's IPFS API and
+   return the resulting CID.
+
+### BitHub (alternative)
+
+If you prefer, you can store data on a BitHub endpoint. Set the following in
+your `.env` file:
+
+```bash
+BITHUB_API_URL=https://example.com/store
+BITHUB_API_TOKEN=your_token
+```
+
+The bot will send the JSON payload to this endpoint when QuickNode credentials
+are not provided.
+
+
