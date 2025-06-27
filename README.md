@@ -29,6 +29,7 @@ TELEGRAM_TOKEN=your_token_here
 - `requirements.txt`: dependencies
 - `Procfile`: required for Render
 - `.env.example`: token placeholder
+- `wallets.json`: sample wallet activity
 
 ## Decentralized Storage Options
 
@@ -54,5 +55,11 @@ BITHUB_API_TOKEN=your_token
 
 The bot will send the JSON payload to this endpoint when QuickNode credentials
 are not provided.
+
+## Using the `longterm` command
+
+Run `/longterm` in your Telegram chat to list sample wallets that have not
+made purchases in the last 30 days. You can modify `wallets.json` with your own
+data to tailor the results.
 
 
