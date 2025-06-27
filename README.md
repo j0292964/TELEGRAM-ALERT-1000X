@@ -4,23 +4,26 @@ This bot monitors whale wallets and new coin launches and sends alerts via Teleg
 
 ## 🛠 Setup (Render or Railway)
 
-1. **Create a `.env` file** with your Telegram Bot Token:
+1. **Create a `.env` file** with your Telegram Bot Token and optional API keys:
 
 ```
 TELEGRAM_TOKEN=your_token_here
+# Optional
+ETHPLORER_API_KEY=freekey
+SMART_WALLET_ADDRESSES=0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe
 ```
 
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
-   - Connect your GitHub repo or upload this ZIP
-   - Set environment variable: `TELEGRAM_TOKEN`
+  - Connect your GitHub repo or upload this ZIP
+  - Set environment variables: `TELEGRAM_TOKEN`, `ETHPLORER_API_KEY`, `SMART_WALLET_ADDRESSES`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
-   - Upload this ZIP or link GitHub repo
-   - Set `TELEGRAM_TOKEN` in Environment
+  - Upload this ZIP or link GitHub repo
+  - Set `TELEGRAM_TOKEN` (and optional wallet vars) in Environment
    - Done!
 
 ## 📦 Included
@@ -29,6 +32,10 @@ TELEGRAM_TOKEN=your_token_here
 - `requirements.txt`: dependencies
 - `Procfile`: required for Render
 - `.env.example`: token placeholder
+
+### Wallet Lookup
+
+Configure `ETHPLORER_API_KEY` and a comma separated list of `SMART_WALLET_ADDRESSES` in your `.env` file to automatically push summaries of those wallets when the bot starts. You can also check any address on demand with the `/wallet` command.
 
 ## Decentralized Storage Options
 
