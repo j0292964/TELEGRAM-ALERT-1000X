@@ -14,6 +14,8 @@ WATCHED_WALLETS = os.getenv("WATCHED_WALLETS", "").split(",")
 WHALE_API_URL = os.getenv("WHALE_FINDER_URL")
 WHALE_API_KEY = os.getenv("WHALE_FINDER_API_KEY")
 WHALE_DB_PATH = os.getenv("WHALE_DB_PATH", "whales.json")
+MIN_TIMES_1000X = int(os.getenv("MIN_TIMES_1000X", "2"))
+MIN_HOLD_DAYS = int(os.getenv("MIN_HOLD_DAYS", "30"))
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +25,7 @@ bot = Bot(token=TELEGRAM_TOKEN)
 
 finder = WhaleFinder(WHALE_API_URL, WHALE_API_KEY, WHALE_DB_PATH)
 watched = [w.strip() for w in WATCHED_WALLETS if w.strip()]
-auto_wallets = finder.update_whales()
+auto_wallets = finder.update_whales(MIN_TIMES_1000X, MIN_HOLD_DAYS)
 for w in auto_wallets:
     if w not in watched:
         watched.append(w)
