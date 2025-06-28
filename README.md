@@ -14,12 +14,14 @@ TELEGRAM_TOKEN=your_token_here
 TELEGRAM_CHAT_ID=your_channel_or_group
 WATCHED_WALLETS=0xWallet1,0xWallet2
 ETHERSCAN_API_KEY=your_etherscan_key
+# Optional: use a QuickNode RPC endpoint instead of Etherscan
+QUICKNODE_RPC_URL=https://your-quicknode-endpoint
 ```
 
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
-   - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`
+  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
@@ -34,7 +36,7 @@ trigger the hook on every push to the `main` branch.
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
-   - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, and `ETHERSCAN_API_KEY` in Environment
+  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, and `QUICKNODE_RPC_URL` in Environment
    - Done!
 
 ## 📦 Included
