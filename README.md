@@ -12,6 +12,7 @@ This bot monitors whale wallets and new coin launches and sends alerts via Teleg
 ```
 TELEGRAM_TOKEN=your_token_here
 TELEGRAM_CHAT_ID=your_channel_or_group
+# Separate multiple wallets with commas, spaces or newlines
 WATCHED_WALLETS=0xWallet1,0xWallet2
 ETHERSCAN_API_KEY=your_etherscan_key
 # Optional: automatically discover wallets holding this token

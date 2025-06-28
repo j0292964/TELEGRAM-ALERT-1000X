@@ -10,8 +10,16 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")  # Channel or group ID
+codex/automate-wallet-discovery-and-updating
 WATCHED_WALLETS = os.getenv("WATCHED_WALLETS", "").split(",")
 DISCOVERY_REFRESH_MINUTES = int(os.getenv("DISCOVERY_REFRESH_MINUTES", "60"))
+
+import re
+
+# Allow comma, space or newline separated wallet addresses
+raw_wallets = os.getenv("WATCHED_WALLETS", "")
+WATCHED_WALLETS = re.split(r"[\s,]+", raw_wallets.strip()) if raw_wallets else []
+main
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO)
