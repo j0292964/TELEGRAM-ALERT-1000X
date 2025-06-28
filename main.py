@@ -9,7 +9,11 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")  # Channel or group ID
-WATCHED_WALLETS = os.getenv("WATCHED_WALLETS", "").split(",")
+import re
+
+# Allow comma, space or newline separated wallet addresses
+raw_wallets = os.getenv("WATCHED_WALLETS", "")
+WATCHED_WALLETS = re.split(r"[\s,]+", raw_wallets.strip()) if raw_wallets else []
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO)
