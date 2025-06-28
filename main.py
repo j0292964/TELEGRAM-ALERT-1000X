@@ -19,6 +19,7 @@ DISCOVERY_REFRESH_MINUTES = int(os.getenv("DISCOVERY_REFRESH_MINUTES", "60"))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 def get_initial_wallets() -> list:
@@ -34,6 +35,12 @@ def get_initial_wallets() -> list:
 
 
 monitor = EthereumMonitor(get_initial_wallets())
+
+
+async def start_background_tasks(application: Application) -> None:
+    """Create background tasks once the event loop is running."""
+    application.create_task(poll_whales(application))
+    application.create_task(refresh_wallets(application))
 
 
 def format_alert(event: dict) -> str:
@@ -108,15 +115,10 @@ def main() -> None:
         logger.error("Telegram credentials missing")
         return
 
-    async def start_tasks(application: Application) -> None:
-        """Create background tasks once the event loop is running."""
-        application.create_task(poll_whales(application))
-        application.create_task(refresh_wallets(application))
-
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
-        .post_init(start_tasks)
+        .post_init(start_background_tasks)
         .build()
     )
 
