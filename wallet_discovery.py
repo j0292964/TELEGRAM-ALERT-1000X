@@ -46,7 +46,7 @@ def discover_smart_wallets(min_hold_days: int = 20, max_wallets: int = 10) -> Li
     now = int(time.time())
     candidates = []
     for addr, ts in first_seen.items():
-        if now - ts < min_hold_days * 86400:
+        if now - ts < min_hold_days * SECONDS_PER_DAY:
             continue
         bal_params = {
             "module": "account",
