@@ -102,17 +102,24 @@ async def unclone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Stopped tracking {wallet}")
 
 
+async def _setup_tasks(app: Application) -> None:
+    app.create_task(poll_whales(app))
+    app.create_task(refresh_wallets(app))
+
+
 def main() -> None:
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         logger.error("Telegram credentials missing")
         return
 
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    app = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .post_init(_setup_tasks)
+        .build()
+    )
     app.add_handler(CommandHandler("clone", clone))
     app.add_handler(CommandHandler("unclone", unclone))
-
-    app.create_task(poll_whales(app))
-    app.create_task(refresh_wallets(app))
 
     app.run_polling()
 
