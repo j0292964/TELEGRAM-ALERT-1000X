@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
 
+
 class BlockchainMonitor(ABC):
     """Base class for blockchain monitors."""
 
@@ -8,6 +9,12 @@ class BlockchainMonitor(ABC):
         self.wallets = wallets
         # {wallet: {token_address: first_seen_timestamp}}
         self.known_tokens: Dict[str, Dict[str, int]] = {w: {} for w in wallets}
+
+    def update_wallets(self, wallets: List[str]):
+        """Update the list of monitored wallets."""
+        self.wallets = wallets
+        for w in wallets:
+            self.known_tokens.setdefault(w, {})
 
     @abstractmethod
     def fetch_new_token_purchases(self, wallet: str) -> List[dict]:
@@ -22,8 +29,8 @@ class BlockchainMonitor(ABC):
         for wallet in self.wallets:
             events = self.fetch_new_token_purchases(wallet)
             for event in events:
-                token = event['token_address']
+                token = event["token_address"]
                 if token not in self.known_tokens[wallet]:
-                    self.known_tokens[wallet][token] = event['timestamp']
-                    alerts.append({**event, 'wallet': wallet})
+                    self.known_tokens[wallet][token] = event["timestamp"]
+                    alerts.append({**event, "wallet": wallet})
         return alerts
