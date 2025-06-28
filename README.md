@@ -14,6 +14,9 @@ TELEGRAM_TOKEN=your_token_here
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
    - Set environment variable: `TELEGRAM_TOKEN`
+     - The value must be exactly as provided by [BotFather](https://t.me/Botfather).
+       If the bot exits with `InvalidToken`, double-check that this variable is
+       set correctly and does not contain placeholder text.
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 

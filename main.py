@@ -9,6 +9,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
+# Basic validation to help diagnose missing or placeholder tokens
+if not TOKEN or TOKEN == "your_bot_token" or TOKEN.startswith("<"):
+    raise ValueError(
+        "TELEGRAM_TOKEN is not set or is using a placeholder. "
+        "Double-check your environment variables or .env file."
+    )
 STORAGE_TOKEN = os.getenv("QUICKNODE_STORAGE_TOKEN")
 STORAGE_URL = os.getenv("QUICKNODE_STORAGE_URL", "https://api.quicknode.com/ipfs/rest/v1/pin")
 BITHUB_URL = os.getenv("BITHUB_API_URL")
