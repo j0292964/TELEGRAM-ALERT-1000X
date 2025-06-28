@@ -108,13 +108,20 @@ def main() -> None:
         logger.error("Telegram credentials missing")
         return
 
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    async def start_tasks(application: Application) -> None:
+        """Create background tasks once the event loop is running."""
+        application.create_task(poll_whales(application))
+        application.create_task(refresh_wallets(application))
+
+    app = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .post_init(start_tasks)
+        .build()
+    )
+
     app.add_handler(CommandHandler("clone", clone))
     app.add_handler(CommandHandler("unclone", unclone))
-
-    # Schedule background tasks for polling and wallet discovery
-    app.create_task(poll_whales(app))
-    app.create_task(refresh_wallets(app))
 
     app.run_polling()
 
