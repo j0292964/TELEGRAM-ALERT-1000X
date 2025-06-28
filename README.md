@@ -16,7 +16,7 @@ TELEGRAM_CHAT_ID=your_channel_or_group
 WATCHED_WALLETS=0xWallet1,0xWallet2
 ETHERSCAN_API_KEY=your_etherscan_key
 # Optional: use a QuickNode RPC endpoint instead of Etherscan
-QUICKNODE_RPC_URL=https://your-quicknode-endpoint
+QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482520c5310af01a12745e0c2a511
 # Optional: use a generic Web3 HTTP provider
 WEB3_PROVIDER_URL=https://your-rpc-endpoint
 # Optional: fetch profitable wallets automatically
@@ -54,17 +54,16 @@ trigger the hook on every push to the `main` branch.
 - `Procfile`: required for Render
 - `.env.example`: token placeholder
 
-## Decentralized Storage Options
+## Optional Services
 
 ### QuickNode
 
-You can pin wallet data to IPFS using the QuickNode Storage add-on.
+Use a QuickNode RPC URL to query Ethereum directly.
 
-1. Create a QuickNode account and enable the **Storage** add-on.
-2. Generate a storage token from your QuickNode dashboard.
-3. Add `QUICKNODE_STORAGE_TOKEN=<your_token>` to your `.env` file.
-4. The bot's helper function will send JSON data to QuickNode's IPFS API and
-   return the resulting CID.
+1. Create a QuickNode account.
+2. Copy your HTTP RPC URL.
+3. Add `QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482520c5310af01a12745e0c2a511` to your `.env` file.
+4. The bot will use this endpoint instead of Etherscan when provided.
 
 ### BitHub (alternative)
 
