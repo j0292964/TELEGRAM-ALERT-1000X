@@ -17,6 +17,14 @@ TELEGRAM_TOKEN=your_token_here
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
+### Automatic Deployment
+
+If you connect the service to GitHub, enable **Auto-Deploy** in the Render
+dashboard. For custom workflows, create a **Deploy Hook** on Render and set the
+URL as the `RENDER_DEPLOY_HOOK` secret in your repository. This project includes
+a GitHub Actions workflow at `.github/workflows/render-deploy.yml` that will
+trigger the hook on every push to the `main` branch.
+
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
