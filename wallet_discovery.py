@@ -3,8 +3,7 @@ import time
 from typing import List, Dict, Optional
 import requests
 
-ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
-ETHERSCAN_API_URL = os.getenv("ETHERSCAN_API_URL", "https://api.etherscan.io/api")
+QUICKNODE_RPC_URL = os.getenv("QUICKNODE_RPC_URL")
 DISCOVERY_TOKEN = os.getenv("DISCOVERY_TOKEN")
 COINGECKO_URL = "https://api.coingecko.com/api/v3"
 
@@ -14,14 +13,17 @@ MIN_HOLD_DAYS = int(os.getenv("DISCOVERY_MIN_HOLD_DAYS", "60"))
 MAX_WALLETS = int(os.getenv("DISCOVERY_MAX_WALLETS", "20"))
 
 
-def _etherscan_request(params: Dict[str, str]) -> dict:
-    params["apikey"] = ETHERSCAN_API_KEY
+def _rpc_request(method: str, params: Optional[list] = None) -> Optional[dict]:
+    if not QUICKNODE_RPC_URL:
+        return None
+    payload = {"jsonrpc": "2.0", "method": method, "params": params or [], "id": 1}
     try:
-        r = requests.get(ETHERSCAN_API_URL, params=params, timeout=10)
+        r = requests.post(QUICKNODE_RPC_URL, json=payload, timeout=10)
         r.raise_for_status()
-        return r.json()
+        data = r.json()
+        return data.get("result")
     except Exception:
-        return {}
+        return None
 
 
 def _get_price_at(token: str, ts: int) -> Optional[float]:
@@ -50,40 +52,37 @@ def _get_current_price(token: str) -> Optional[float]:
 
 
 def _get_balance(address: str, token: str) -> int:
-    params = {
-        "module": "account",
-        "action": "tokenbalance",
-        "contractaddress": token,
-        "address": address,
-        "tag": "latest",
-    }
-    data = _etherscan_request(params)
-    if data.get("status") == "1":
-        try:
-            return int(data.get("result", "0"))
-        except Exception:
-            return 0
-    return 0
+    data = "0x70a08231" + address[2:].rjust(64, "0")
+    result = _rpc_request("eth_call", [{"to": token, "data": data}, "latest"])
+    return int(result, 16) if result else 0
+
+
+TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a69f8cdbe9"
 
 
 def _get_early_transfers(token: str) -> List[Dict[str, str]]:
-    params = {
-        "module": "account",
-        "action": "tokentx",
-        "contractaddress": token,
-        "page": 1,
-        "offset": 100,
-        "sort": "asc",
-    }
-    data = _etherscan_request(params)
-    if data.get("status") == "1":
-        return data.get("result", [])
-    return []
+    params = [{
+        "fromBlock": "0x0",
+        "toBlock": "latest",
+        "address": token,
+        "topics": [TRANSFER_TOPIC],
+    }]
+    logs = _rpc_request("eth_getLogs", params) or []
+    result = []
+    for log in logs[:100]:
+        blk = log["blockNumber"]
+        blk_data = _rpc_request("eth_getBlockByNumber", [blk, False])
+        ts = int(blk_data["timestamp"], 16) if blk_data else 0
+        result.append({
+            "to": "0x" + log["topics"][2][-40:],
+            "timeStamp": str(ts),
+        })
+    return result
 
 
 def discover_smart_wallets(min_hold_days: int = MIN_HOLD_DAYS, max_wallets: int = MAX_WALLETS) -> List[str]:
     """Discover wallets that hit the desired profit multiplier holding DISCOVERY_TOKEN."""
-    if not (ETHERSCAN_API_KEY and DISCOVERY_TOKEN):
+    if not (QUICKNODE_RPC_URL and DISCOVERY_TOKEN):
         return []
 
     transfers = _get_early_transfers(DISCOVERY_TOKEN)
