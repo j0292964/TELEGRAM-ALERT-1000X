@@ -7,16 +7,23 @@ This bot monitors whale wallets and new coin launches and sends alerts via Teleg
 0. **Python 3.13+**
    - This bot is tested with Python 3.13. Ensure your runtime uses Python 3.13 or later.
 
-1. **Create a `.env` file** with your Telegram Bot Token:
+1. **Create a `.env` file** with your Telegram credentials and API keys:
 
 ```
 TELEGRAM_TOKEN=your_token_here
+TELEGRAM_CHAT_ID=your_channel_or_group
+WATCHED_WALLETS=0xWallet1,0xWallet2
+ETHERSCAN_API_KEY=your_etherscan_key
+# Optional: use a QuickNode RPC endpoint instead of Etherscan
+QUICKNODE_RPC_URL=https://your-quicknode-endpoint
+# Optional: use a generic Web3 HTTP provider
+WEB3_PROVIDER_URL=https://your-rpc-endpoint
 ```
 
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
-   - Set environment variable: `TELEGRAM_TOKEN`
+  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, `WEB3_PROVIDER_URL`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
@@ -31,7 +38,7 @@ trigger the hook on every push to the `main` branch.
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
-   - Set `TELEGRAM_TOKEN` in Environment
+  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, and `WEB3_PROVIDER_URL` in Environment
    - Done!
 
 ## 📦 Included

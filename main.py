@@ -1,59 +1,50 @@
+import asyncio
 import logging
-import json
 import os
-import requests
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from dotenv import load_dotenv
+from telegram import Bot
+from monitors.ethereum_monitor import EthereumMonitor
 
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
-STORAGE_TOKEN = os.getenv("QUICKNODE_STORAGE_TOKEN")
-STORAGE_URL = os.getenv("QUICKNODE_STORAGE_URL", "https://api.quicknode.com/ipfs/rest/v1/pin")
-BITHUB_URL = os.getenv("BITHUB_API_URL")
-BITHUB_TOKEN = os.getenv("BITHUB_API_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")  # Channel or group ID
+WATCHED_WALLETS = os.getenv("WATCHED_WALLETS", "").split(",")
+POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🚀 Bot is running on Python 3.13!")
-    # Example usage of decentralized storage
-    sample_data = {"chat_id": update.effective_chat.id}
-    cid = store_wallet_data(sample_data)
-    if cid:
-        await update.message.reply_text(f"Stored sample data with CID: {cid}")
+bot = Bot(token=TELEGRAM_TOKEN)
+monitor = EthereumMonitor([w.strip() for w in WATCHED_WALLETS if w.strip()])
 
-def store_wallet_data(data: dict):
-    """Persist JSON data using QuickNode or BitHub if configured."""
-    if STORAGE_TOKEN:
-        files = {"file": ("data.json", json.dumps(data))}
-        headers = {"Authorization": f"Bearer {STORAGE_TOKEN}"}
-        try:
-            resp = requests.post(STORAGE_URL, files=files, headers=headers, timeout=10)
-            resp.raise_for_status()
-            cid = resp.json().get("cid")
-            logging.info("Stored data on IPFS with CID %s", cid)
-            return cid
-        except Exception as e:
-            logging.error("Failed to store data on QuickNode: %s", e)
-            return None
-    elif BITHUB_URL and BITHUB_TOKEN:
-        headers = {"Authorization": f"Bearer {BITHUB_TOKEN}"}
-        try:
-            resp = requests.post(BITHUB_URL, json=data, headers=headers, timeout=10)
-            resp.raise_for_status()
-            result = resp.json().get("cid") or resp.json().get("hash")
-            logging.info("Stored data on BitHub with id %s", result)
-            return result
-        except Exception as e:
-            logging.error("Failed to store data on BitHub: %s", e)
-            return None
-    else:
-        logging.warning("No storage service configured")
-        return None
+
+def format_alert(event: dict) -> str:
+    token = event['token_address']
+    wallet = event['wallet']
+    amount = event['amount']
+    tx = event['tx_hash']
+    return (
+        f"\U0001F680 Whale {wallet} bought token {token}\n"
+        f"Amount: {amount}\nTx: https://etherscan.io/tx/{tx}"
+    )
+
+
+async def poll_whales():
+    while True:
+        alerts = monitor.check_wallets()
+        for alert in alerts:
+            msg = format_alert(alert)
+            try:
+                await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=msg)
+                logger.info("Sent alert: %s", msg)
+            except Exception as e:
+                logger.error("Failed to send alert: %s", e)
+        await asyncio.sleep(POLL_INTERVAL)
+
 
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.run_polling()
+    if not monitor.wallets:
+        logger.error("No wallets configured. Set WATCHED_WALLETS in environment" )
+    else:
+        asyncio.run(poll_whales())
