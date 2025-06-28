@@ -3,6 +3,15 @@
 This bot monitors whale wallets and new coin launches and sends alerts via Telegram.
 
 This version can discover wallets that achieved big profits, and you can /clone or /unclone wallets directly from Telegram.
+
+## Usage
+
+Send these commands in your Telegram chat with the bot:
+
+```text
+/clone <wallet>
+/unclone <wallet>
+```
 ## 🛠 Setup (Render or Railway)
 
 0. **Python 3.13+**
@@ -20,6 +29,9 @@ ETHERSCAN_API_KEY=your_etherscan_key
 DISCOVERY_TOKEN=0xYourTokenContract
 # How often to refresh discovery (minutes)
 DISCOVERY_REFRESH_MINUTES=60
+DISCOVERY_MIN_HOLD_DAYS=60
+DISCOVERY_MAX_WALLETS=20
+HOLD_PERIOD_SECONDS=3600
 # Optional: use a QuickNode RPC endpoint instead of Etherscan
 QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482520c5310af01a12745e0c2a511/
 ```
@@ -27,7 +39,7 @@ QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
-  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, `QUICKNODE_RPC_URL`
+  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, `DISCOVERY_MIN_HOLD_DAYS`, `DISCOVERY_MAX_WALLETS`, `HOLD_PERIOD_SECONDS`, `QUICKNODE_RPC_URL`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
@@ -42,7 +54,7 @@ trigger the hook on every push to the `main` branch.
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
-  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, and `QUICKNODE_RPC_URL` in Environment
+  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, `DISCOVERY_MIN_HOLD_DAYS`, `DISCOVERY_MAX_WALLETS`, `HOLD_PERIOD_SECONDS`, and `QUICKNODE_RPC_URL` in Environment
    - Done!
 
 ## 📦 Included
