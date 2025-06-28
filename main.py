@@ -102,7 +102,7 @@ async def unclone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Stopped tracking {wallet}")
 
 
-async def main() -> None:
+def main() -> None:
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         logger.error("Telegram credentials missing")
         return
@@ -114,8 +114,8 @@ async def main() -> None:
     app.create_task(poll_whales(app))
     app.create_task(refresh_wallets(app))
 
-    await app.run_polling()
+    app.run_polling()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
