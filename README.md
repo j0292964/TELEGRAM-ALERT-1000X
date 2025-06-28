@@ -2,6 +2,7 @@
 
 This bot monitors whale wallets and new coin launches and sends alerts via Telegram.
 
+This version can discover wallets that achieved big profits, and you can /clone or /unclone wallets directly from Telegram.
 ## 🛠 Setup (Render or Railway)
 
 0. **Python 3.13+**
