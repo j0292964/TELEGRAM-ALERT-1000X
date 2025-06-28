@@ -15,7 +15,7 @@ TELEGRAM_CHAT_ID=your_channel_or_group
 WATCHED_WALLETS=0xWallet1,0xWallet2
 ETHERSCAN_API_KEY=your_etherscan_key
 # Optional: use a QuickNode RPC endpoint instead of Etherscan
-QUICKNODE_RPC_URL=https://your-quicknode-endpoint
+QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482520c5310af01a12745e0c2a511/
 ```
 
 2. **Deploy on [Render](https://render.com)**:
