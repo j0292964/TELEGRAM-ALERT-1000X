@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 import re
@@ -47,29 +46,25 @@ def format_alert(event: dict) -> str:
     )
 
 
-async def poll_whales(app: Application) -> None:
-    while True:
-        alerts = monitor.check_wallets()
-        for alert in alerts:
-            msg = format_alert(alert)
-            try:
-                await app.bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=msg)
-                logger.info("Sent alert: %s", msg)
-            except Exception as e:
-                logger.error("Failed to send alert: %s", e)
-        await asyncio.sleep(POLL_INTERVAL)
+async def poll_whales(context: ContextTypes.DEFAULT_TYPE) -> None:
+    alerts = monitor.check_wallets()
+    for alert in alerts:
+        msg = format_alert(alert)
+        try:
+            await context.bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=msg)
+            logger.info("Sent alert: %s", msg)
+        except Exception as e:
+            logger.error("Failed to send alert: %s", e)
 
 
-async def refresh_wallets(app: Application) -> None:
-    while True:
-        wallets = discover_smart_wallets()
-        if wallets:
-            saved = load_wallets()
-            merged = list({*saved, *wallets})
-            save_wallets(merged)
-            monitor.update_wallets(merged)
-            logger.info("Updated wallet list: %s", merged)
-        await asyncio.sleep(DISCOVERY_REFRESH_MINUTES * 60)
+async def refresh_wallets(context: ContextTypes.DEFAULT_TYPE) -> None:
+    wallets = discover_smart_wallets()
+    if wallets:
+        saved = load_wallets()
+        merged = list({*saved, *wallets})
+        save_wallets(merged)
+        monitor.update_wallets(merged)
+        logger.info("Updated wallet list: %s", merged)
 
 
 async def clone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -102,7 +97,7 @@ async def unclone(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f"Stopped tracking {wallet}")
 
 
-async def main() -> None:
+def main() -> None:
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         logger.error("Telegram credentials missing")
         return
@@ -111,11 +106,15 @@ async def main() -> None:
     app.add_handler(CommandHandler("clone", clone))
     app.add_handler(CommandHandler("unclone", unclone))
 
-    app.create_task(poll_whales(app))
-    app.create_task(refresh_wallets(app))
+    app.job_queue.run_repeating(poll_whales, interval=POLL_INTERVAL, first=0)
+    app.job_queue.run_repeating(
+        refresh_wallets,
+        interval=DISCOVERY_REFRESH_MINUTES * 60,
+        first=10,
+    )
 
-    await app.run_polling()
+    app.run_polling()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
