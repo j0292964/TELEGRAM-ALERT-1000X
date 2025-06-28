@@ -14,6 +14,10 @@ TELEGRAM_TOKEN=your_token_here
 TELEGRAM_CHAT_ID=your_channel_or_group
 WATCHED_WALLETS=0xWallet1,0xWallet2
 ETHERSCAN_API_KEY=your_etherscan_key
+# Optional: automatically discover wallets holding this token
+DISCOVERY_TOKEN=0xYourTokenContract
+# How often to refresh discovery (minutes)
+DISCOVERY_REFRESH_MINUTES=60
 # Optional: use a QuickNode RPC endpoint instead of Etherscan
 QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482520c5310af01a12745e0c2a511/
 ```
@@ -21,7 +25,7 @@ QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
-  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`
+  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, `QUICKNODE_RPC_URL`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
@@ -36,7 +40,7 @@ trigger the hook on every push to the `main` branch.
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
-  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, and `QUICKNODE_RPC_URL` in Environment
+  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, and `QUICKNODE_RPC_URL` in Environment
    - Done!
 
 ## 📦 Included
