@@ -42,6 +42,9 @@ QUICKNODE_RPC_URL=https://polished-convincing-needle.quiknode.pro/191380b33f5482
   - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `DISCOVERY_TOKEN`, `DISCOVERY_REFRESH_MINUTES`, `DISCOVERY_MIN_HOLD_DAYS`, `DISCOVERY_MAX_WALLETS`, `HOLD_PERIOD_SECONDS`, `QUICKNODE_RPC_URL`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
+     
+     `main()` is synchronous and `python-telegram-bot` manages the event loop
+     internally, so avoid wrapping the script in `asyncio.run()`.
 
 ### Automatic Deployment
 
