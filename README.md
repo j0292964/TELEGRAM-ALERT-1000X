@@ -18,12 +18,16 @@ ETHERSCAN_API_KEY=your_etherscan_key
 QUICKNODE_RPC_URL=https://your-quicknode-endpoint
 # Optional: use a generic Web3 HTTP provider
 WEB3_PROVIDER_URL=https://your-rpc-endpoint
+# Optional: fetch profitable wallets automatically
+WHALE_FINDER_URL=https://example.com/whales
+WHALE_FINDER_API_KEY=your_api_key
+WHALE_DB_PATH=whales.json
 ```
 
 2. **Deploy on [Render](https://render.com)**:
    - Click "New Web Service"
    - Connect your GitHub repo or upload this ZIP
-  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, `WEB3_PROVIDER_URL`
+  - Set environment variables: `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, `WEB3_PROVIDER_URL`, `WHALE_FINDER_URL`, `WHALE_FINDER_API_KEY`, `WHALE_DB_PATH`
    - Use build command: `pip install -r requirements.txt`
    - Use start command: `python main.py`
 
@@ -38,7 +42,7 @@ trigger the hook on every push to the `main` branch.
 3. **Deploy on [Railway](https://railway.app)**:
    - Create new project
    - Upload this ZIP or link GitHub repo
-  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, and `WEB3_PROVIDER_URL` in Environment
+  - Set `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `WATCHED_WALLETS`, `ETHERSCAN_API_KEY`, `QUICKNODE_RPC_URL`, `WEB3_PROVIDER_URL`, `WHALE_FINDER_URL`, `WHALE_FINDER_API_KEY`, and `WHALE_DB_PATH` in Environment
    - Done!
 
 ## 📦 Included

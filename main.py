@@ -4,23 +4,35 @@ import os
 from dotenv import load_dotenv
 from telegram import Bot
 from monitors.ethereum_monitor import EthereumMonitor
+from monitors.whale_finder import WhaleFinder
 
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")  # Channel or group ID
 WATCHED_WALLETS = os.getenv("WATCHED_WALLETS", "").split(",")
+WHALE_API_URL = os.getenv("WHALE_FINDER_URL")
+WHALE_API_KEY = os.getenv("WHALE_FINDER_API_KEY")
+WHALE_DB_PATH = os.getenv("WHALE_DB_PATH", "whales.json")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 bot = Bot(token=TELEGRAM_TOKEN)
-monitor = EthereumMonitor([w.strip() for w in WATCHED_WALLETS if w.strip()])
+
+finder = WhaleFinder(WHALE_API_URL, WHALE_API_KEY, WHALE_DB_PATH)
+watched = [w.strip() for w in WATCHED_WALLETS if w.strip()]
+auto_wallets = finder.update_whales()
+for w in auto_wallets:
+    if w not in watched:
+        watched.append(w)
+
+monitor = EthereumMonitor(watched)
 
 
 def format_alert(event: dict) -> str:
-    token = event['token_address']
+    token = event.get('token', event['token_address'])
     wallet = event['wallet']
     amount = event['amount']
     tx = event['tx_hash']

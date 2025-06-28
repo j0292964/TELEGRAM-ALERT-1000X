@@ -2,6 +2,16 @@ import os
 import requests
 from typing import List, Dict, Optional
 
+ERC20_ABI = [
+    {
+        "constant": True,
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{"name": "", "type": "string"}],
+        "type": "function",
+    },
+]
+
 from web3 import Web3
 
 from .blockchain_monitor import BlockchainMonitor
@@ -23,6 +33,30 @@ class EthereumMonitor(BlockchainMonitor):
         # Keep track of the last scanned block for each wallet when using QuickNode
         self.last_block: Dict[str, int] = {w: 0 for w in wallets}
         self.w3 = Web3(Web3.HTTPProvider(WEB3_PROVIDER_URL)) if WEB3_PROVIDER_URL else None
+
+    def _get_token_symbol(self, token_address: str) -> str:
+        """Return the ERC-20 token symbol if possible."""
+        if self.w3:
+            try:
+                contract = self.w3.eth.contract(
+                    address=Web3.to_checksum_address(token_address), abi=ERC20_ABI
+                )
+                return contract.functions.symbol().call()
+            except Exception:
+                pass
+        if QUICKNODE_RPC_URL:
+            data = "0x95d89b41"  # keccak('symbol()') first 4 bytes
+            params = [{"to": token_address, "data": data}, "latest"]
+            result = self._rpc_request("eth_call", params)
+            if isinstance(result, str) and result.startswith("0x"):
+                try:
+                    hex_bytes = result[2:]
+                    text = bytes.fromhex(hex_bytes).decode("utf-8").rstrip("\x00")
+                    if text:
+                        return text
+                except Exception:
+                    pass
+        return token_address
 
     def _etherscan_request(self, params: Dict[str, str]) -> dict:
         params["apikey"] = ETHERSCAN_API_KEY
@@ -69,6 +103,7 @@ class EthereumMonitor(BlockchainMonitor):
             for tx in data.get("result", []):
                 result.append({
                     "token_address": tx["contractAddress"],
+                    "token": self._get_token_symbol(tx["contractAddress"]),
                     "amount": tx["value"],
                     "tx_hash": tx["hash"],
                     "timestamp": int(tx["timeStamp"]),
@@ -94,6 +129,7 @@ class EthereumMonitor(BlockchainMonitor):
             timestamp = int(ts_hex["timestamp"], 16) if ts_hex else 0
             result.append({
                 "token_address": log["address"],
+                "token": self._get_token_symbol(log["address"]),
                 "amount": int(log["data"], 16),
                 "tx_hash": log["transactionHash"],
                 "timestamp": timestamp,
@@ -119,6 +155,7 @@ class EthereumMonitor(BlockchainMonitor):
             block = self.w3.eth.get_block(block_number)
             result.append({
                 "token_address": log.address,
+                "token": self._get_token_symbol(log.address),
                 "amount": int(log.data, 16),
                 "tx_hash": log.transactionHash.hex(),
                 "timestamp": block.timestamp,
