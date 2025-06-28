@@ -4,6 +4,9 @@ This bot monitors whale wallets and new coin launches and sends alerts via Teleg
 
 ## 🛠 Setup (Render or Railway)
 
+0. **Python 3.13+**
+   - This bot is tested with Python 3.13. Ensure your runtime uses Python 3.13 or later.
+
 1. **Create a `.env` file** with your Telegram Bot Token:
 
 ```
@@ -35,6 +38,7 @@ trigger the hook on every push to the `main` branch.
 
 - `main.py`: core bot logic
 - `requirements.txt`: dependencies
+  - Includes `python-telegram-bot` 22.1 for Python 3.13 compatibility
 - `Procfile`: required for Render
 - `.env.example`: token placeholder
 
